@@ -561,6 +561,33 @@
    // ================= all functions to create geometry ===================================
 
    /** @memberOf JSROOT.GEO */
+   JSROOT.GEO.createTGeoArbN = function(shape, faces_limit) {
+      var size = shape.fTriangles.length;
+
+      console.debug("createTGeoArbN");
+      if (faces_limit < 0) return 12;
+      console.debug("createTGeoArbN: triangles - "+size);
+
+      var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(size);
+      for (var n=0;n<size;n+=1) {
+         var p1 = shape.fPoints[shape.fTriangles[n].fIndices[0]];
+         var p2 = shape.fPoints[shape.fTriangles[n].fIndices[1]];
+         var p3 = shape.fPoints[shape.fTriangles[n].fIndices[2]];
+         var normal = shape.fTriangles[n].fNormal;
+         console.debug("createTGeoArbN: p1 - "+p1.fX+" " +p1.fY+" " +p1.fZ);
+         console.debug("createTGeoArbN: p2 - "+p2.fX+" " +p2.fY+" " +p2.fZ);
+         console.debug("createTGeoArbN: p3 - "+p3.fX+" " +p3.fY+" " +p3.fZ);
+         console.debug("createTGeoArbN: normal - "+normal.fX+" " +normal.fY+" " +normal.fZ);
+
+         creator.AddFace3(p1.fX, p1.fY, p1.fZ,
+            p2.fX, p2.fY, p2.fZ,
+            p3.fX, p3.fY, p3.fZ);
+         creator.SetNormal(normal.fX, normal.fY, normal.fZ);
+      }
+      return creator.Create();
+   }
+
+   /** @memberOf JSROOT.GEO */
    JSROOT.GEO.createCubeBuffer = function(shape, faces_limit) {
 
       if (faces_limit < 0) return 12;
@@ -1840,6 +1867,7 @@
 
       try {
          switch (shape._typename) {
+            case "TGeoArbN": return JSROOT.GEO.createTGeoArbN( shape, limit );
             case "TGeoBBox": return JSROOT.GEO.createCubeBuffer( shape, limit );
             case "TGeoPara": return JSROOT.GEO.createParaBuffer( shape, limit );
             case "TGeoTrd1":
@@ -1910,6 +1938,7 @@
       info.push("DX="+conv(shape.fDX) + " DY="+conv(shape.fDY) + " DZ="+conv(shape.fDZ));
 
       switch (shape._typename) {
+         case "TGeoArbN": info.push("Triangles=" + shape.fTriangles.length); break;
          case "TGeoBBox": break;
          case "TGeoPara": info.push("Alpha=" + shape.fAlpha + " Phi=" + shape.fPhi + " Theta=" + shape.fTheta); break;
          case "TGeoTrd2": info.push("Dy1=" + conv(shape.fDy1) + " Dy2=" + conv(shape.fDy1));
