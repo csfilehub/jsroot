@@ -2031,9 +2031,9 @@ JSROOT.define(['three', 'csg'], (THREE, ThreeBSP) => {
 
       try {
          switch (shape._typename) {
-            case "TGeoArbN": return JSROOT.GEO.createTGeoArbN( shape, limit );
-            case "TGeoBBox": return JSROOT.GEO.createCubeBuffer( shape, limit );
-            case "TGeoPara": return JSROOT.GEO.createParaBuffer( shape, limit );
+            case "TGeoArbN": return createTGeoArbN( shape, limit );
+            case "TGeoBBox": return createCubeBuffer( shape, limit );
+            case "TGeoPara": return createParaBuffer( shape, limit );
             case "TGeoTrd1":
             case "TGeoTrd2": return createTrapezoidBuffer( shape, limit );
             case "TGeoArb8":
